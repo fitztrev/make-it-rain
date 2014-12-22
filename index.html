@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Make It Rain</title>
+  <meta name="description" content="Make It Rain gifs">
+  <style type="text/css">
+	  img { display: block; margin: 100px auto; }
+  </style>
+</head>
+<body>
+	<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$.getJSON('gifs.json', function(data){
+				$.each(data, function(key, img){
+					console.log(img);
+					$('body').append('<img src="'+img+'">');
+				});
+			});
+		});
+	</script>
+</body>
+</html>
