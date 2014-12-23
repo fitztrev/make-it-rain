@@ -10,7 +10,7 @@ Works with HipChat + Slack.
 
 1) Copy `config.sample.php` to `config.php`
 
-2) Update it with either your Hipchat or Slack API info (see below)
+2) Update it with either your Hipchat or Slack API info (see below). Optionally, add your Stripe API key if you wish to verify your webhooks with Stripe.
 
 3) Add a webhook to [your Stripe account](https://dashboard.stripe.com/account/webhooks)
 
@@ -29,6 +29,16 @@ Works with HipChat + Slack.
 1. Go to <https://my.slack.com/services/new/incoming-webhook>
 2. Create a webhook for your desired channel
 3. Copy the webhook URL to `config.php`
+
+#### Webhook verification
+
+It's important to secure your webhook endpoints so that a malicious attacker cannot send false notifications.
+
+`verification` is a variable that can be set to one of the following:
+
+* `secret` (default) to verify webhooks only with your secret
+* `API` to verify webhooks by checking Stripe's API for the charge
+* `both` to validate both of the above.
 
 ## Contributing gifs
 

@@ -2,18 +2,31 @@
 
 require 'config.php';
 
-// make sure the URL contains the secret identifier
+// make sure the URL contains the secret identifier 
+// and check charge in the Stripe API
 // to ensure the request is coming from Stripe
-if ($_GET['secret'] != $secret) {
-    die('Invalid secret identifier');
+if ($verification == "secret" || $verification == "both") {
+    if ($_GET['secret'] != $secret) {
+        die('Invalid secret identifier');
+    }
 }
 
 // parse the Stripe webhook request
 $input = @file_get_contents("php://input");
 $event_json = json_decode($input);
 
+// for extra security, optionally retrieve from the Stripe API
+if ($verification == "API" || $verification == "both") {
+    $event_id = $event_json->id;
+    $event = getStripeEvent($event_id, $stripe['secret_key']);
+}
+// if we don't go to stripe, just use the supplied json
+else {
+    $event = $event_json;
+}
+
 // we only care about successful payments
-if ($event_json->type != 'charge.succeeded') {
+if ($event->type != 'charge.succeeded') {
     die('Not a charge notification. Quitting.');
 };
 
@@ -24,7 +37,7 @@ $gifs = array_merge($gifs, $custom_gifs);
 $gif = $gifs[array_rand($gifs)];
 
 // get the dollar amount
-$amount = number_format($event_json->data->object->amount / 100, 2);
+$amount = number_format($event->data->object->amount / 100, 2);
 
 // send the notification to our chat room
 // hipchat
@@ -72,3 +85,16 @@ function sendNotification($url, $data)
     $body = curl_exec($ch);
     curl_close($ch);
 }
+
+function getStripeEvent($id, $secret_key) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.stripe.com/v1/events/{$id}");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_USERPWD, "$secret_key:");
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    $output = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+    return json_decode($output);
+}
+
