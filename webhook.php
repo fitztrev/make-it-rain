@@ -36,7 +36,7 @@ if ($hipchat['auth_token']) {
         $hipchat['auth_token']
     );
     $data = array(
-        'message' => sprintf('%s - <%s>', $amount, $gif),
+        'message' => sprintf('%s <br><img src="%s">', $amount, $gif),
         'color'   => 'green',
         'notify'  => true,
     );
