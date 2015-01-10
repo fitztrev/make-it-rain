@@ -23,10 +23,9 @@ $gifs = json_decode(file_get_contents($url));
 $gifs = array_merge($gifs, $custom_gifs);
 $gif = $gifs[array_rand($gifs)];
 
-
-$dollar_sign = ($event_json->data->object->currency == 'inr') ? "&#x20b9;" : "$";
-// get the dollar amount
-$amount = number_format($event_json->data->object->amount / 100, 2);
+// get currency sign to use (right now, just USD and INR supported. More to follow? **cough**pullrequest**cough**)
+$dollar_sign = ($event_json->data->object->currency == 'inr') ? '&#x20b9;' : '$';
+$amount = $dollar_sign . number_format($event_json->data->object->amount / 100, 2);
 
 // send the notification to our chat room
 // hipchat
@@ -37,7 +36,7 @@ if ($hipchat['auth_token']) {
         $hipchat['auth_token']
     );
     $data = array(
-        'text'  => sprintf('%s%s - <%s>', $dollar_sign, $amount, $gif),
+        'message' => sprintf('%s - <%s>', $amount, $gif),
         'color'   => 'green',
         'notify'  => true,
     );
@@ -47,7 +46,7 @@ if ($hipchat['auth_token']) {
 // slack
 if ($slack['webhook_url']) {
     $data = array(
-        'text'         => sprintf('$%s - <%s>', $amount, $gif),
+        'text'         => sprintf('%s - <%s>', $amount, $gif),
         'username'     => 'Just got paid',
         'icon_emoji'   => ':heavy_dollar_sign:',
         'unfurl_links' => true,
