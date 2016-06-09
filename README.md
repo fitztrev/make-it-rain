@@ -6,7 +6,7 @@ Works with HipChat + Slack.
 
 ![screenshot](https://i.imgur.com/gU7gFBW.gif)
 
-Current selection of gifs: http://fitztrev.github.io/make-it-rain/
+Current selection of gifs: https://fitztrev.github.io/make-it-rain/
 
 Send pull requests to the `gh-pages` branch to add more.
 
